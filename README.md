@@ -17,6 +17,13 @@ Appen har stöd för att ställa in en serveradress att hämta fler sånger frå
 			"Lyrics":"Sångtext",
 			"Notes":"Trivia"
 		},
+		{ 
+			"Title":"Sångtitel",
+			"Melody":"Namn på melodi",
+			"Text":"Textförfattare",
+			"Lyrics":"Sångtext",
+			"Notes":"Trivia"
+		}
 	]
 }
 ```
