@@ -32,13 +32,16 @@ public class SongsManager : MonoBehaviour
     public Text SongNote;
 
 	public Button DeleteButton;
-	
-    public GameObject ButtonPrefab, SectionPrefab;
+	public Button ShareButton;
 
-    private List<ListItemSong> _allListItems = new List<ListItemSong>();
+	public GameObject ButtonPrefab, SectionPrefab;
+
+	[HideInInspector]
+	public Song CurrentSong;
+
+	private List<ListItemSong> _allListItems = new List<ListItemSong>();
 	private Dictionary<Songs.SongType, ListItemSection> _allSections = new Dictionary<Songs.SongType, ListItemSection>();
-	private Song _currentSong;
-
+	
 	// Use this for initialization
 	void Start ()
     {
@@ -132,7 +135,16 @@ public class SongsManager : MonoBehaviour
 	public void SaveCustomSong()
 	{
 		Song song = new Song(TitelInput.text, MelodyInput.text != "" ? "Melodi: " + MelodyInput.text : "", TextInput.text != "" ? "Text: " + TextInput.text : "", LyricsInput.text, "");
+		AddSongToCustomSongs(song);
 
+		TitelInput.text = "";
+		TextInput.text = "";
+		MelodyInput.text = "";
+		LyricsInput.text = "";
+	}
+
+	public void AddSongToCustomSongs(Song song)
+	{
 		var customSongs = new List<Song>();
 
 		if (PlayerPrefs.HasKey("CustomSongs"))
@@ -140,15 +152,16 @@ public class SongsManager : MonoBehaviour
 			customSongs.AddRange(JsonHelper.FromJson<Song>(PlayerPrefs.GetString("CustomSongs")));
 		}
 
+		foreach(var s in customSongs)
+		{
+			if (s.Lyrics.Equals(song.Lyrics))
+				return;
+		}
+
 		customSongs.Add(song);
 
 		PlayerPrefs.SetString("CustomSongs", JsonHelper.ToJson<Song>(customSongs.ToArray()));
 		RefreshCustomSongs(customSongs);
-
-		TitelInput.text = "";
-		TextInput.text = "";
-		MelodyInput.text = "";
-		LyricsInput.text = "";
 	}
 
 	private void RefreshCustomSongs(List<Song> customSongs)
@@ -184,13 +197,13 @@ public class SongsManager : MonoBehaviour
 			}
 		}
 	}
-
+	
 	public void DeleteCustomSong()
 	{
 		if (PlayerPrefs.HasKey("CustomSongs"))
 		{
 			var customSongs = new List<Song>(JsonHelper.FromJson<Song>(PlayerPrefs.GetString("CustomSongs")));
-			customSongs.RemoveAll(g => g.Lyrics.Equals(_currentSong.Lyrics) && g.Title.Equals(_currentSong.Title));
+			customSongs.RemoveAll(g => g.Lyrics.Equals(CurrentSong.Lyrics) && g.Title.Equals(CurrentSong.Title));
 			PlayerPrefs.SetString("CustomSongs", JsonHelper.ToJson<Song>(customSongs.ToArray()));
 			RefreshCustomSongs(customSongs);
 
@@ -267,7 +280,8 @@ public class SongsManager : MonoBehaviour
         SongNote.text = song.Notes;
 
 		DeleteButton.gameObject.SetActive(song.Type == Songs.SongType.Egna);
-		_currentSong = song;
+		//ShareButton.gameObject.SetActive(song.Type == Songs.SongType.Egna);
+		CurrentSong = song;
 	}
 
 	private void AddSongsByType(Songs.SongType songType)
