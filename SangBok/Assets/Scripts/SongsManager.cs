@@ -23,6 +23,8 @@ public class SongsManager : MonoBehaviour
 	public InputField MelodyInput;
 	public InputField LyricsInput;
 
+	public InputField ImportInput;
+
 	[Header("Song Panel")]
 	public RectTransform SongPanel;
 	public Text SongTitle;
@@ -134,13 +136,23 @@ public class SongsManager : MonoBehaviour
 
 	public void SaveCustomSong()
 	{
-		Song song = new Song(TitelInput.text, MelodyInput.text != "" ? "Melodi: " + MelodyInput.text : "", TextInput.text != "" ? "Text: " + TextInput.text : "", LyricsInput.text, "");
-		AddSongToCustomSongs(song);
+		if (LyricsInput.text != "")
+		{
+			Song song = new Song(TitelInput.text, MelodyInput.text != "" ? "Melodi: " + MelodyInput.text : "", TextInput.text != "" ? "Text: " + TextInput.text : "", LyricsInput.text, "");
+			AddSongToCustomSongs(song);
+		}
+
+		if(ImportInput.text != "")
+		{
+			Song song = JsonUtility.FromJson<Song>(ImportInput.text);
+			AddSongToCustomSongs(song);
+		}
 
 		TitelInput.text = "";
 		TextInput.text = "";
 		MelodyInput.text = "";
 		LyricsInput.text = "";
+		ImportInput.text = "";
 	}
 
 	public void AddSongToCustomSongs(Song song)

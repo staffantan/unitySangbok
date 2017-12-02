@@ -31,6 +31,10 @@ public class DebugLogUI : MonoBehaviour {
 		if(type == LogType.Exception)
 		{
 			logQueue.Enqueue(stackTrace);
+			if(logQueue.Count > 5)
+			{
+				logQueue.Dequeue();
+			}
 		}
 	}
 }
