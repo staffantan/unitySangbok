@@ -28,6 +28,7 @@ public class SongsManager : MonoBehaviour
 
 	[Header("Song Panel")]
 	public RectTransform SongPanel;
+
 	public Text SongTitle;
     public Text SongText;
     public Text SongMelody;
@@ -49,7 +50,10 @@ public class SongsManager : MonoBehaviour
 
 	private List<ListItemSong> _allListItems = new List<ListItemSong>();
 	private Dictionary<Songs.SongType, ListItemSection> _allSections = new Dictionary<Songs.SongType, ListItemSection>();
-	
+
+	private string _deeplinkAlt = "sangbok://?sang=";
+	private string _deeplink = "http://www.ahlvik.se/sangbok/?data=";
+
 	// Use this for initialization
 	void Start ()
     {
@@ -141,6 +145,13 @@ public class SongsManager : MonoBehaviour
 	{
 		SettingsPanel.gameObject.SetActive(true);
 	}
+	
+	public void DeepLink(string deeplink)
+	{
+		//deeplink: sangbok://?sang=<data>
+		ImportInput.text = deeplink;
+		SaveCustomSong();
+	}
 
 	public void SaveCustomSong()
 	{
@@ -152,6 +163,16 @@ public class SongsManager : MonoBehaviour
 
 		if(ImportInput.text != "")
 		{
+			if (ImportInput.text.StartsWith(_deeplink))
+			{
+				ImportInput.text = ImportInput.text.Substring(_deeplink.Length);
+			}
+
+			if (ImportInput.text.StartsWith(_deeplinkAlt))
+			{
+				ImportInput.text = ImportInput.text.Substring(_deeplinkAlt.Length);
+			}
+			
 			byte[] bytes = Convert.FromBase64String(ImportInput.text);
 			var json = Encoding.UTF8.GetString(bytes);
 			Song song = JsonUtility.FromJson<Song>(json);
@@ -383,5 +404,4 @@ public class SongsManager : MonoBehaviour
 
 		_allSections.Add(songType, liSection);
 	}
-	
 }

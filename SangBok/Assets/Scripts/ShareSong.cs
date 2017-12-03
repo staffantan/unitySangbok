@@ -4,12 +4,15 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
-using ZXing;
+//using ZXing;
 
 public class ShareSong : MonoBehaviour {
 	public SongsManager songsManager;
 	//private RawImage _rawImage;
 	private InputField _input;
+
+	//private string _deeplink = "sangbok://?sang=";
+	private string _deeplink = "http://www.ahlvik.se/sangbok/?data=";
 
 	private void OnEnable()
 	{
@@ -20,7 +23,7 @@ public class ShareSong : MonoBehaviour {
 		
 		var message = JsonUtility.ToJson(songsManager.CurrentSong);
 		var bytes = Encoding.UTF8.GetBytes(message);
-		_input.text = Convert.ToBase64String(bytes);
+		_input.text = _deeplink+Convert.ToBase64String(bytes);
 
 		UniClipboard.SetText(_input.text);
 
