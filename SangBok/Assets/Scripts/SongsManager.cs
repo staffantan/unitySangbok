@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -35,11 +36,16 @@ public class SongsManager : MonoBehaviour
 
 	public Button DeleteButton;
 	public Button ShareButton;
-
+	
+	[Header("Prefabs")]
 	public GameObject ButtonPrefab, SectionPrefab;
 
 	[HideInInspector]
 	public Song CurrentSong;
+
+	[Header("Dialogs")]
+	public GameObject DeleteConfirmation;
+	public GameObject SharePanel;
 
 	private List<ListItemSong> _allListItems = new List<ListItemSong>();
 	private Dictionary<Songs.SongType, ListItemSection> _allSections = new Dictionary<Songs.SongType, ListItemSection>();
@@ -126,6 +132,8 @@ public class SongsManager : MonoBehaviour
         {
             SongPanel.gameObject.SetActive(false);
 			SettingsPanel.gameObject.SetActive(false);
+			DeleteConfirmation.SetActive(false);
+			SharePanel.SetActive(false);
 		}
     }
 
@@ -144,7 +152,9 @@ public class SongsManager : MonoBehaviour
 
 		if(ImportInput.text != "")
 		{
-			Song song = JsonUtility.FromJson<Song>(ImportInput.text);
+			byte[] bytes = Convert.FromBase64String(ImportInput.text);
+			var json = Encoding.UTF8.GetString(bytes);
+			Song song = JsonUtility.FromJson<Song>(json);
 			AddSongToCustomSongs(song);
 		}
 
@@ -292,7 +302,7 @@ public class SongsManager : MonoBehaviour
         SongNote.text = song.Notes;
 
 		DeleteButton.gameObject.SetActive(song.Type == Songs.SongType.Egna);
-		//ShareButton.gameObject.SetActive(song.Type == Songs.SongType.Egna);
+		ShareButton.gameObject.SetActive(song.Type == Songs.SongType.Egna);
 		CurrentSong = song;
 	}
 

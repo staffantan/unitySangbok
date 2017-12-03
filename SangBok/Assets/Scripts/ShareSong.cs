@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using ZXing;
@@ -17,8 +19,11 @@ public class ShareSong : MonoBehaviour {
 		}
 		
 		var message = JsonUtility.ToJson(songsManager.CurrentSong);
-		_input.text = message;
-		
+		var bytes = Encoding.UTF8.GetBytes(message);
+		_input.text = Convert.ToBase64String(bytes);
+
+		UniClipboard.SetText(_input.text);
+
 		//var encoded = new Texture2D(256, 256);
 		//var color32 = Encode(message, encoded.width, encoded.height);
 		//encoded.SetPixels32(color32);
